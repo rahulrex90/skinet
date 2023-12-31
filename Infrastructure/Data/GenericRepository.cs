@@ -14,11 +14,20 @@ namespace Infrastructure.Data
             _context = context;
         }
 
+        public void Add(T entity)
+        {
+            _context.Set<T>().Add(entity);
+        }
         public async Task<T> GetByIdAsync(int id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
 
+        public void Update(T entity)
+        {
+            _context.Set<T>().Attach(entity);
+            _context.Entry(entity).State = EntityState.Modified;
+        }
         public async Task<T> GetEntityWithSpec(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).FirstOrDefaultAsync();
@@ -37,7 +46,10 @@ namespace Infrastructure.Data
         {
             return await ApplySpecification(spec).CountAsync();
         }
-
+        public void Delete(T entity)
+        {
+            _context.Set<T>().Remove(entity);
+        }
 
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
